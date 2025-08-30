@@ -1,0 +1,15 @@
+# Ignoruj pliki budowania i tymczasowe
+cmake-build-debug/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+build.ninja
+*.obj
+*.exe
+*.log
+*.tmp
+*.user
+*.swp
+*.swo
+Testing/
+
