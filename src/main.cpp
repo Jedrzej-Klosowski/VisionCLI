@@ -1,6 +1,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
+#include <../include/CLI11.hpp>
 
 #include <iostream>
 
