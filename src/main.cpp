@@ -36,41 +36,70 @@ int main(int argc, char* argv[]) {
         return -1;
     }
     if (run) {
+        show = true;
+        ifstream ifs("../include/coco.names");
+        if (!ifs.is_open()) {
+            cerr << "Could not open coco.names!" << endl;
+            return -1;
+        }
         vector<string> classes;
-        ifstream ifs("coco.names");
         string line;
         while (getline(ifs, line)) classes.push_back(line);
+        if (classes.empty()) {
+            cerr << "No class names loaded!" << endl;
+            return -1;
+        }
         Net net = readNetFromDarknet("../include/yolov3.cfg", "../include/yolov3.weights");
         net.setPreferableBackend(DNN_BACKEND_OPENCV);
         net.setPreferableTarget(DNN_TARGET_CPU);
-        Mat blob = blobFromImage(img, 1/255.0, Size(416, 416), Scalar(0,0,0), true, false);
+        Mat blob = blobFromImage(img, 1.0/255.0, Size(416, 416), Scalar(0,0,0), true, false);
         net.setInput(blob);
         vector<String> outNames = net.getUnconnectedOutLayersNames();
         vector<Mat> outs;
         net.forward(outs, outNames);
 
-        float confThreshold = 0.5;
+        float confThreshold = 0.5f;
+        float nmsThreshold = 0.4f; // typowa wartość dla NMS
 
-        // Przetwarzanie wyników
+        // Zbierz detekcje
+        vector<Rect> boxes;
+        vector<int> classIds;
+        vector<float> confidences;
+
         for (auto &out : outs) {
-            float* data = (float*)out.data;
+            auto data = reinterpret_cast<float*>(out.data);
             for (int i = 0; i < out.rows; i++, data += out.cols) {
                 Mat scores = out.row(i).colRange(5, out.cols);
                 Point classIdPoint;
                 double confidence;
-                minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
+                minMaxLoc(scores, nullptr, &confidence, nullptr, &classIdPoint);
                 if (confidence > confThreshold) {
-                    int centerX = (int)(data[0] * img.cols);
-                    int centerY = (int)(data[1] * img.rows);
-                    int width   = (int)(data[2] * img.cols);
-                    int height  = (int)(data[3] * img.rows);
+                    int centerX = static_cast<int>(data[0] * img.cols);
+                    int centerY = static_cast<int>(data[1] * img.rows);
+                    int width   = static_cast<int>(data[2] * img.cols);
+                    int height  = static_cast<int>(data[3] * img.rows);
                     int left    = centerX - width / 2;
                     int top     = centerY - height / 2;
 
-                    rectangle(img, Rect(left, top, width, height), Scalar(0,255,0), 2);
-                    putText(img, classes[classIdPoint.x], Point(left, top - 10),
-                            FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0,255,0), 2);
+                    boxes.emplace_back(left, top, width, height);
+                    classIds.push_back(classIdPoint.x);
+                    confidences.push_back(static_cast<float>(confidence));
                 }
+            }
+        }
+
+        // Non-Maximum Suppression
+        vector<int> indices;
+        cv::dnn::NMSBoxes(boxes, confidences, confThreshold, nmsThreshold, indices);
+
+        for (int idx : indices) {
+            Rect box = boxes[idx];
+            rectangle(img, box, Scalar(0,255,0), 2);
+            if (classIds[idx] >= 0 && classIds[idx] < classes.size()) {
+                putText(img, classes[classIds[idx]], Point(box.x, box.y - 10),
+                        FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0,255,0), 2);
+            } else {
+                cerr << "classId out of range: " << classIds[idx] << endl;
             }
         }
     }
