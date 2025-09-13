@@ -1,4 +1,3 @@
-````markdown name=README.md
 # VisionCLI – Terminalowy Rozpoznawacz Obrazów w Terminalu
 
 **VisionCLI** to narzędzie w C++ umożliwiające analizę obrazów z poziomu terminala. Wykorzystuje OpenCV do detekcji obiektów (YOLOv3), konwersji do odcieni szarości oraz podstawowego wyświetlania obrazów. Kod jest prosty, nowoczesny i łatwy do rozbudowy o kolejne funkcjonalności.
@@ -99,4 +98,3 @@ Autor: [Jędrzej Kłosowski](https://github.com/Jedrzej-Klosowski)
 ---
 
 **VisionCLI** – Rozpoznawaj świat prosto z terminala!
-````
