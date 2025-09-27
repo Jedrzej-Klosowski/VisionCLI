@@ -1,18 +1,16 @@
-# VisionCLI – Terminalowy Rozpoznawacz Obiektów na Obrazach
+# VisionCLI – Terminalowy Rozpoznawacz Obrazów w Terminalu
 
-**VisionCLI** to nowoczesna aplikacja w C++ umożliwiająca analizę obrazów bezpośrednio z poziomu terminala. Wykorzystuje bibliotekę OpenCV do wykrywania obiektów, kształtów i kolorów na zdjęciach, generując przejrzyste raporty oraz wizualizacje w stylu ASCII.
+**VisionCLI** to narzędzie w C++ umożliwiające analizę obrazów z poziomu terminala. Wykorzystuje OpenCV do detekcji obiektów (YOLOv3), konwersji do odcieni szarości oraz podstawowego wyświetlania obrazów. Kod jest prosty, nowoczesny i łatwy do rozbudowy o kolejne funkcjonalności.
 
 ---
 
 ## ✨ Funkcje
 
-- **Rozpoznawanie obiektów** (np. ludzi, zwierząt, pojazdów) na zdjęciach przy pomocy OpenCV i popularnych modeli (YOLO, Haar Cascades).
-- **Wykrywanie kształtów** (koła, prostokąty, trójkąty) oraz dominujących kolorów.
-- **Generowanie raportów** z analizy do pliku (JSON).
-- **Podgląd wyników** w formie uproszczonego ASCII-art w terminalu.
-- **Tryb batch** – analiza wielu obrazów naraz.
-- **Obsługa własnych modeli** (np. niestandardowy YOLO).
-- Prosty, przyjazny interfejs CLI.
+- **Detekcja obiektów** na obrazie przy pomocy YOLOv3 (wymaga plików `yolov3.cfg`, `yolov3.weights` oraz `coco.names` w katalogu `include/`).
+- **Konwersja obrazu do odcieni szarości** i zapis kopii.
+- **Wyświetlanie obrazu** (kolorowego lub szarego) w oknie OpenCV.
+- Prosty i przejrzysty interfejs CLI (oparty o [CLI11](https://github.com/CLIUtils/CLI11)).
+- Łatwa konfiguracja oraz dalsza rozbudowa.
 
 ---
 
@@ -20,9 +18,13 @@
 
 ### Wymagania
 
-- C++17 lub nowszy
+- C++20 (minimalnie C++17)
 - [OpenCV](https://opencv.org/) (>= 4.0)
 - CMake (>= 3.10)
+- Pliki modeli YOLO (umieść w `include/`):  
+  - `yolov3.cfg`  
+  - `yolov3.weights`  
+  - `coco.names`
 
 ### Budowanie projektu
 
@@ -37,17 +39,15 @@ make
 ### Przykładowe użycie
 
 ```bash
-./visioncli analyze assets/dog.jpg --shapes --colors --objects
+./VisionCLI --image assets/dog.jpg --run --show
 ```
 
-#### Argumenty
+#### Dostępne argumenty
 
-- `analyze <plik>` — analiza obrazu
-- `--shapes` — wykrywanie kształtów
-- `--colors` — wykrywanie dominujących kolorów
-- `--objects` — wykrywanie obiektów (ludzie, zwierzęta, pojazdy itd.)
-- `--output <plik.json>` — zapis raportu do pliku
-- `--ascii` — podgląd ASCII-art
+- `-i, --image <plik>` — ścieżka do pliku obrazu (**wymagane**)
+- `-g, --gray` — konwertuje obraz do odcieni szarości i zapisuje kopię
+- `-s, --show` — wyświetla obraz w oknie
+- `-r, --run` — uruchamia detekcję obiektów na obrazie (YOLOv3)
 
 ---
 
@@ -55,25 +55,24 @@ make
 
 ```
 VisionCLI/
-├── src/              # Kod źródłowy
-├── include/          # Pliki nagłówkowe
-├── tests/            # Testy
+├── src/              # Kod źródłowy (main.cpp)
+├── include/          # Pliki nagłówkowe, modele YOLO, coco.names
 ├── assets/           # Przykładowe obrazy
-├── scripts/          # Skrypty pomocnicze
 ├── CMakeLists.txt    # Konfiguracja budowania
-├── README.md         # Opis projektu
-├── LICENSE           # Licencja
-├── .gitignore        # Ignorowane pliki
+├── README.md         # Dokumentacja projektu
+├── LICENSE           # Licencja MIT
+├── .gitignore        # Pliki ignorowane przez git
 ```
 
 ---
 
 ## 🛠️ Technologie
 
-- **C++17**
+- **C++20** (działa też z C++17)
 - **OpenCV**
 - **CMake**
-- (opcjonalnie) Catch2, YOLO/ONNX, fmtlib, nlohmann/json
+- **CLI11** (do obsługi argumentów CLI)
+- (opcjonalnie) YOLOv3 i pliki konfiguracyjne
 
 ---
 
