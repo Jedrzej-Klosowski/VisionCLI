@@ -4,6 +4,7 @@
 #include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include "../include/CLI11.hpp"
+#include <windows.h>
 
 #include <iostream>
 #include <filesystem>
@@ -37,7 +38,12 @@ int main(int argc, char* argv[]) {
     }
     if (run) {
         show = true;
-        ifstream ifs("../include/coco.names");
+        // Pobierz ścieżkę do katalogu z plikiem wykonywalnym
+        char exePath[MAX_PATH];
+        GetModuleFileNameA(NULL, exePath, MAX_PATH);
+        fs::path exeDir = fs::path(exePath).parent_path();
+        fs::path cocoPath = exeDir / ".." / "include" / "coco.names";
+        ifstream ifs(cocoPath);
         if (!ifs.is_open()) {
             cerr << "Could not open coco.names!" << endl;
             return -1;
@@ -49,23 +55,19 @@ int main(int argc, char* argv[]) {
             cerr << "No class names loaded!" << endl;
             return -1;
         }
-        Net net = readNetFromDarknet("../include/yolov3.cfg", "../include/yolov3.weights");
+        Net net = readNetFromDarknet((exeDir / ".." / "include" / "yolov3.cfg").string(), (exeDir / ".." / "include" / "yolov3.weights").string());
         net.setPreferableBackend(DNN_BACKEND_OPENCV);
         net.setPreferableTarget(DNN_TARGET_CPU);
-        Mat blob = blobFromImage(img, 1.0/255.0, Size(416, 416), Scalar(0,0,0), true, false);
+        Mat blob = blobFromImage(img, 1.0f/255.0f, Size(416, 416), Scalar(0,0,0), true, false);
         net.setInput(blob);
         vector<String> outNames = net.getUnconnectedOutLayersNames();
         vector<Mat> outs;
         net.forward(outs, outNames);
-
         float confThreshold = 0.5f;
-        float nmsThreshold = 0.4f; // typowa wartość dla NMS
-
-        // Zbierz detekcje
+        float nmsThreshold = 0.4f;
         vector<Rect> boxes;
         vector<int> classIds;
         vector<float> confidences;
-
         for (auto &out : outs) {
             auto data = reinterpret_cast<float*>(out.data);
             for (int i = 0; i < out.rows; i++, data += out.cols) {
