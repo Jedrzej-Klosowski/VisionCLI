@@ -31,11 +31,17 @@ int main(int argc, char* argv[]) {
 
     CLI11_PARSE(app, argc, argv);
 
+    // Diagnostic logs
+    cout << "Args: image=" << image_path << " show=" << show << " gray=" << gray << " run=" << run << endl;
+
     cv::Mat img = cv::imread(image_path, cv::IMREAD_COLOR);
     if (img.empty()) {
         std::cerr << "Could not open or find the image!" << std::endl;
         return -1;
     }
+
+    cout << "Loaded image: " << img.cols << "x" << img.rows << " channels=" << img.channels() << endl;
+
     if (run) {
         show = true;
         // Pobierz ścieżkę do katalogu z plikiem wykonywalnym
