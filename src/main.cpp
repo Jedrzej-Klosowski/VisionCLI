@@ -22,9 +22,13 @@ int main(int argc, char* argv[]) {
 
     CLI::App app{"Vision CLI"};
     std::string image_path;
+    std::string cfg_path_opt;
+    std::string weights_path_opt;
     app.add_option("-i,--image", image_path, "Path to the image file")
        ->required()
        ->check(CLI::ExistingFile);
+    app.add_option("--cfg", cfg_path_opt, "Optional path to yolov3.cfg (overrides default)");
+    app.add_option("--weights", weights_path_opt, "Optional path to yolov3.weights (overrides default)");
     app.add_flag("-g,--gray", gray, "Convert image to grayscale");
     app.add_flag("-s,--show", show, "Display the image in a window");
     app.add_flag("-r,--run", run,"Run object detection on the image");
@@ -61,7 +65,25 @@ int main(int argc, char* argv[]) {
             cerr << "No class names loaded!" << endl;
             return -1;
         }
-        Net net = readNetFromDarknet((exeDir / ".." / "include" / "yolov3.cfg").string(), (exeDir / ".." / "include" / "yolov3.weights").string());
+        // Ustal ścieżki do plików cfg i weights (użyj opcji CLI jeśli podano)
+        fs::path cfgPath;
+        fs::path weightsPath;
+        if (!cfg_path_opt.empty()) cfgPath = fs::path(cfg_path_opt);
+        else cfgPath = exeDir / ".." / "include" / "yolov3.cfg";
+        if (!weights_path_opt.empty()) weightsPath = fs::path(weights_path_opt);
+        else weightsPath = exeDir / ".." / "include" / "yolov3.weights";
+
+        // Sprawdź, czy pliki istnieją i wypisz czytelny komunikat jeśli brakuje
+        if (!fs::exists(cfgPath)) {
+            cerr << "Missing cfg file: " << cfgPath << "\nPlease download or place yolov3.cfg in the include folder." << endl;
+            return -1;
+        }
+        if (!fs::exists(weightsPath)) {
+            cerr << "Missing weights file: " << weightsPath << "\nYou need to download yolov3.weights (~200MB) and put it in the include folder." << endl;
+            return -1;
+        }
+
+        Net net = readNetFromDarknet(cfgPath.string(), weightsPath.string());
         net.setPreferableBackend(DNN_BACKEND_OPENCV);
         net.setPreferableTarget(DNN_TARGET_CPU);
         Mat blob = blobFromImage(img, 1.0f/255.0f, Size(416, 416), Scalar(0,0,0), true, false);
