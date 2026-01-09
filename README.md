@@ -1,32 +1,32 @@
-# VisionCLI – Terminalowy Rozpoznawacz Obrazów w Terminalu
+# VisionCLI – Terminal-Based Image Recognizer
 
-**VisionCLI** to narzędzie w C++ umożliwiające analizę obrazów z poziomu terminala. Wykorzystuje OpenCV do detekcji obiektów (YOLOv3), konwersji do odcieni szarości oraz podstawowego wyświetlania obrazów. Kod jest prosty, nowoczesny i łatwy do rozbudowy o kolejne funkcjonalności.
-
----
-
-## ✨ Funkcje
-
-- **Detekcja obiektów** na obrazie przy pomocy YOLOv3 (wymaga plików `yolov3.cfg`, `yolov3.weights` oraz `coco.names` w katalogu `include/`).
-- **Konwersja obrazu do odcieni szarości** i zapis kopii.
-- **Wyświetlanie obrazu** (kolorowego lub szarego) w oknie OpenCV.
-- Prosty i przejrzysty interfejs CLI (oparty o [CLI11](https://github.com/CLIUtils/CLI11)).
-- Łatwa konfiguracja oraz dalsza rozbudowa.
+**VisionCLI** is a C++ tool for analyzing images directly from the terminal. It utilizes OpenCV for object detection (YOLOv3), grayscale conversion, and basic image display functionalities.
 
 ---
 
-## 🚀 Szybki start
+## ✨ Features
 
-### Wymagania
+- **Object detection** on images using YOLOv3 (requires `yolov3.cfg`, `yolov3.weights`, and `coco.names` files in the `include/` directory).
+- **Image conversion to grayscale** and saving a copy.
+- **Image display** (color or grayscale) in an OpenCV window.
+- Simple and intuitive CLI interface (based on [CLI11](https://github.com/CLIUtils/CLI11)).
+- Easy to configure and extend.
 
-- C++20 (minimalnie C++17)
+---
+
+## 🚀 Quick Start
+
+### Requirements
+
+- C++20 (minimum C++17)
 - [OpenCV](https://opencv.org/) (>= 4.0)
 - CMake (>= 3.10)
-- Pliki modeli YOLO (umieść w `include/`):  
+- YOLO model files (place in `include/`):  
   - `yolov3.cfg`  
   - `yolov3.weights`  
   - `coco.names`
 
-### Budowanie projektu
+### Building the Project
 
 ```bash
 git clone https://github.com/Jedrzej-Klosowski/VisionCLI.git
@@ -36,65 +36,69 @@ cmake ..
 make
 ```
 
-### Przykładowe użycie
+### Example Usage
 
 ```bash
 ./VisionCLI --image assets/dog.jpg --run --show
 ```
 
-#### Dostępne argumenty
+#### Available Arguments
 
-- `-i, --image <plik>` — ścieżka do pliku obrazu (**wymagane**)
-- `-g, --gray` — konwertuje obraz do odcieni szarości i zapisuje kopię
-- `-s, --show` — wyświetla obraz w oknie
-- `-r, --run` — uruchamia detekcję obiektów na obrazie (YOLOv3)
+- `-i, --image <file>` — path to the image file (**required**)
+- `-g, --gray` — converts the image to grayscale and saves a copy
+- `-s, --show` — displays the image in a window
+- `-r, --run` — runs object detection on the image (YOLOv3)
 
 ---
 
-## 📁 Struktura projektu
+## 📁 Project Structure
 
 ```
 VisionCLI/
-├── src/              # Kod źródłowy (main.cpp)
-├── include/          # Pliki nagłówkowe, modele YOLO, coco.names
-├── assets/           # Przykładowe obrazy
-├── CMakeLists.txt    # Konfiguracja budowania
-├── README.md         # Dokumentacja projektu
-├── LICENSE           # Licencja MIT
-├── .gitignore        # Pliki ignorowane przez git
+├── src/              # Source code (main.cpp)
+├── include/          # Header files, YOLO models, coco.names
+├── assets/           # Sample images
+├── CMakeLists.txt    # Build configuration
+├── README.md         # Project documentation
+├── LICENSE           # MIT License
+├── .gitignore        # Git ignored files
 ```
 
 ---
 
-## 🛠️ Technologie
+## 🛠️ Technologies
 
-- **C++20** (działa też z C++17)
+- **C++20** (also works with C++17)
 - **OpenCV**
 - **CMake**
-- **CLI11** (do obsługi argumentów CLI)
-- (opcjonalnie) YOLOv3 i pliki konfiguracyjne
+- **CLI11** (for CLI argument handling)
+- (optional) YOLOv3 and configuration files
 
 ---
 
-## 🤝 Kontrybucje
+## 🤝 Contributions
 
-1. Forkuj repozytorium
-2. Stwórz nową gałąź (`git checkout -b feature/nazwa`)
-3. Wprowadź zmiany i napisz testy
-4. Zrób pull request
-
----
-
-## 📃 Licencja
-
-Projekt na licencji MIT – możesz używać, modyfikować i rozpowszechniać dowolnie!
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/name`)
+3. Apply changes and write tests
+4. Submit a pull request
 
 ---
 
-## ✉️ Kontakt
+## 📃 License
 
-Autor: [Jędrzej Kłosowski](https://github.com/Jedrzej-Klosowski)
+This project is licensed under the MIT License – feel free to use, modify, and distribute it!
 
 ---
 
-**VisionCLI** – Rozpoznawaj świat prosto z terminala!
+## ✉️ Contact
+
+Author: [Jędrzej Kłosowski](https://github.com/Jedrzej-Klosowski)
+
+---
+
+**VisionCLI** – Explore the world directly from the terminal!
+
+---
+
+[View this README in Polish](https://github.com/Jedrzej-Klosowski/VisionCLI/blob/main/README.md)
