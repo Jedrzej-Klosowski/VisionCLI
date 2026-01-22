@@ -48,15 +48,16 @@ int main(int argc, char* argv[]) {
 
     if (run) {
         show = true;
-        // Pobierz ścieżkę do katalogu z plikiem wykonywalnym
         char exePath[MAX_PATH];
         GetModuleFileNameA(NULL, exePath, MAX_PATH);
         fs::path exeDir = fs::path(exePath).parent_path();
-        fs::path cocoPath = exeDir / ".." / "include" / "coco.names";
-        ifstream ifs(cocoPath);
-        if (!ifs.is_open()) {
-            cerr << "Could not open coco.names!" << endl;
-            return -1;
+
+        // First check if include/ is next to the exe (for packaged distribution)
+        fs::path cocoPath = exeDir / "include" / "coco.names";
+
+        // If missing, check developer layout (two levels up)
+        if (!fs::exists(cocoPath)) {
+            cocoPath = exeDir / ". ." / ". ." / "include" / "coco.names";
         }
         vector<string> classes;
         string line;
@@ -65,7 +66,7 @@ int main(int argc, char* argv[]) {
             cerr << "No class names loaded!" << endl;
             return -1;
         }
-        // Ustal ścieżki do plików cfg i weights (użyj opcji CLI jeśli podano)
+        // Resolve cfg and weights paths (CLI options take priority)
         fs::path cfgPath;
         fs::path weightsPath;
         if (!cfg_path_opt.empty()) cfgPath = fs::path(cfg_path_opt);
@@ -73,7 +74,7 @@ int main(int argc, char* argv[]) {
         if (!weights_path_opt.empty()) weightsPath = fs::path(weights_path_opt);
         else weightsPath = exeDir / ".." / "include" / "yolov3.weights";
 
-        // Sprawdź, czy pliki istnieją i wypisz czytelny komunikat jeśli brakuje
+        // Validate that files exist and print clear messages if missing
         if (!fs::exists(cfgPath)) {
             cerr << "Missing cfg file: " << cfgPath << "\nPlease download or place yolov3.cfg in the include folder." << endl;
             return -1;
@@ -137,10 +138,10 @@ int main(int argc, char* argv[]) {
         cv::cvtColor(img, img, cv::COLOR_BGR2GRAY);
 
         fs::path input_path(image_path);
-        fs::path output_path = input_path.parent_path() /          // katalog wejściowy (../assets)
-                               (input_path.stem().string() +       // nazwa pliku (dog)
-                                "-szara-kopia" +                   // suffix
-                                input_path.extension().string());  // rozszerzenie (.jpg)
+        fs::path output_path = input_path.parent_path() /        // input directory (../assets)
+                               (input_path.stem().string() +        // file name (dog)
+                                "-szara-kopia" +                    // suffix
+                                input_path.extension().string());   // extension (.jpg)
 
         cv::imwrite(output_path.string(), img);
 
