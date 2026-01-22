@@ -54,6 +54,9 @@ int main(int argc, char* argv[]) {
 
         // First check if include/ is next to the exe (for packaged distribution)
         fs::path cocoPath = exeDir / "include" / "coco.names";
+        if (!fs::exists(cocoPath)) {
+            cocoPath = exeDir / ". ." / "include" / "coco.names";
+        }
 
         // If missing, check developer layout (two levels up)
         if (!fs::exists(cocoPath)) {
@@ -74,10 +77,23 @@ int main(int argc, char* argv[]) {
         // Resolve cfg and weights paths (CLI options take priority)
         fs::path cfgPath;
         fs::path weightsPath;
-        if (!cfg_path_opt.empty()) cfgPath = fs::path(cfg_path_opt);
-        else cfgPath = exeDir / ".." / "include" / "yolov3.cfg";
-        if (!weights_path_opt.empty()) weightsPath = fs::path(weights_path_opt);
-        else weightsPath = exeDir / ".." / "include" / "yolov3.weights";
+        if (!cfg_path_opt.empty()) {
+            cfgPath = fs:: path(cfg_path_opt);
+        } else {
+            cfgPath = exeDir / "include" / "yolov3.cfg";
+            if (!fs::exists(cfgPath)) {
+                cfgPath = exeDir / ".." / "include" / "yolov3.cfg";
+            }
+        }
+
+        if (!weights_path_opt. empty()) {
+            weightsPath = fs::path(weights_path_opt);
+        } else {
+            weightsPath = exeDir / "include" / "yolov3.weights";
+            if (!fs::exists(weightsPath)) {
+                weightsPath = exeDir / ".." / "include" / "yolov3.weights";
+            }
+        }
 
         // Validate that files exist and print clear messages if missing
         if (!fs::exists(cfgPath)) {
