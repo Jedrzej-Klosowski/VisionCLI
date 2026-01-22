@@ -57,10 +57,15 @@ int main(int argc, char* argv[]) {
 
         // If missing, check developer layout (two levels up)
         if (!fs::exists(cocoPath)) {
-            cocoPath = exeDir / ". ." / ". ." / "include" / "coco.names";
+            cocoPath = exeDir / ".." / ".." / "include" / "coco.names";
         }
         vector<string> classes;
         string line;
+        std::ifstream ifs(cocoPath);
+        if (!ifs.is_open()) {
+            cerr << "Could not open class names file: " << cocoPath << endl;
+            return -1;
+        }
         while (getline(ifs, line)) classes.push_back(line);
         if (classes.empty()) {
             cerr << "No class names loaded!" << endl;
